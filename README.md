@@ -1,18 +1,26 @@
 # AirCanvas
 
-> **A real-time computer-vision interface for drawing, pointing and explaining ideas with your hand.**
+> **Real-time computer-vision interface for drawing, pointing and explaining ideas with your hand.**
 
-AirCanvas explores what happens when hand tracking, temporal reasoning and a lightweight AR interaction layer become one product experience.
+AirCanvas is a supporting engineering project demonstrating real-time interaction, WebSockets, FastAPI, browser vision and temporal reasoning.
 
-[![Frontend](https://img.shields.io/badge/Frontend-Vite%20%2B%20React-61DAFB?style=flat-square&logo=react&logoColor=white)](https://react.dev/) [![Vision](https://img.shields.io/badge/Vision-MediaPipe-blue?style=flat-square)](https://ai.google.dev/edge/mediapipe/solutions/guide) [![Backend](https://img.shields.io/badge/Backend-FastAPI-009688?style=flat-square)](https://fastapi.tiangolo.com/)
+## Engineering signal
 
-## Product problem
+The project is useful as evidence that I can reason about applications where **latency, state, confidence and transient failures** matter.
 
-A mouse and keyboard are excellent for structured input, but not always for pointing at something during a presentation, sketching an idea while speaking, or explaining a visual concept.
-
-AirCanvas explores a camera-first interaction model:
-
-**See the hand → understand the movement → turn movement into an interface.**
+```text
+Camera
+  ↓
+MediaPipe Hand Landmarks
+  ↓
+Tracking + Confidence
+  ↓
+Temporal Filtering
+  ↓
+WebSocket / API Layer
+  ↓
+React Interface
+```
 
 ## Current capabilities
 
@@ -23,51 +31,21 @@ AirCanvas explores a camera-first interaction model:
 | Pointer | Use the fingertip as a presentation pointer |
 | Laser | Create a temporary emphasis trail |
 
-## Architecture
-
-```text
-Camera
-  ↓
-MediaPipe Hand Landmarks
-  ↓
-┌──────────────────┬────────────────────┐
-│ Browser Canvas   │ Python Vision Layer│
-│ low-latency UI   │ temporal reasoning │
-└────────┬─────────┴──────────┬─────────┘
-         └──────────┬──────────┘
-                    ↓
-             AirCanvas Layer
-       draw / shape / pointer / laser
-```
-
-The browser owns camera access, landmark detection and immediate feedback. The optional Python service handles experimental temporal filtering, gesture reasoning, movement analysis and shape processing.
-
 ## Engineering focus
 
 - Temporal fingertip tracking
 - Adaptive smoothing
 - Velocity estimation
 - Confidence handling
-- Short tracking-gap prediction
+- Tracking-gap prediction
 - Temporal gesture voting
-- Polygon and shape alignment
 - WebSocket communication
-- Experimental learning/training path
+- FastAPI service
+- Browser-side fallback behaviour
 
-The project follows a deliberate loop:
+The project follows:
 
 **Build → test → observe → measure → improve.**
-
-## Repository structure
-
-```text
-backend/              Python vision service
-  app/                tracking + FastAPI logic
-  training/           experimental training path
-docs/                 architecture notes
-public/               static assets
-src/                  React application
-```
 
 ## Run the frontend
 
@@ -75,8 +53,6 @@ src/                  React application
 npm install
 npm run dev
 ```
-
-Open the Vite URL and allow camera access. Camera APIs require a secure context such as `localhost` or HTTPS.
 
 ## Run the optional Python service
 
@@ -97,45 +73,18 @@ macOS / Linux:
 source .venv/bin/activate
 ```
 
-Install dependencies and start FastAPI:
+Then install dependencies and run:
 
 ```bash
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 
-The browser-to-Python bridge can use:
+## Portfolio role
 
-```text
-VITE_VISION_WS_URL=ws://localhost:8000/ws/vision
-```
+**SUPPORTING ENGINEERING — real-time systems**
 
-The frontend can fall back to browser-side vision when the Python service is not configured.
-
-## Roadmap
-
-- [x] Camera input
-- [x] Fingertip tracking
-- [x] Gesture-gated drawing
-- [x] Draw / shape / pointer / laser modes
-- [x] Browser-side smoothing
-- [x] FastAPI + WebSocket vision channel
-- [x] Temporal filtering
-- [x] Confidence tracking
-- [x] Tracking-gap prediction
-- [ ] Reproducible tracking benchmark
-- [ ] Training dataset + evaluation pipeline
-- [ ] Chrome Manifest V3 extension
-- [ ] Browser-tab / meeting integration
-- [ ] Shared collaboration
-
-## Product + engineering signal
-
-AirCanvas demonstrates the kind of work I enjoy at the intersection of **product interaction, computer vision, real-time systems and engineering experimentation**.
-
-## Built by
-
-**Amarnath Mishra** — Product Analyst / Product Builder with a full-stack engineering background.
+AirCanvas is not the main IBM application-support project. It provides additional evidence of debugging and reasoning about real-time application behaviour, while [ThriiLocal](https://github.com/Rrachet/ThriiLocal), [SupportHub](https://github.com/Rrachet/SupportHub) and [APIAtlas](https://github.com/Rrachet/apiatlas) carry the primary application-operations story.
 
 ## License
 

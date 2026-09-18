@@ -1,12 +1,8 @@
 # AirCanvas
 
-> **Real-time computer-vision interface for drawing, pointing and explaining ideas with your hand.**
+### Real-time computer-vision interface
 
-AirCanvas is a supporting engineering project demonstrating real-time interaction, WebSockets, FastAPI, browser vision and temporal reasoning.
-
-## Engineering signal
-
-The project is useful as evidence that I can reason about applications where **latency, state, confidence and transient failures** matter.
+AirCanvas explores real-time interaction where **latency, confidence, state and transient failures** matter.
 
 ```text
 Camera
@@ -19,72 +15,70 @@ Temporal Filtering
   ↓
 WebSocket / API Layer
   ↓
-React Interface
+Interactive Interface
 ```
-
-## Current capabilities
-
-| Mode | Purpose |
-|---|---|
-| Draw | Follow the fingertip and create freehand strokes |
-| Shape | Convert rough geometry into cleaner shapes |
-| Pointer | Use the fingertip as a presentation pointer |
-| Laser | Create a temporary emphasis trail |
 
 ## Engineering focus
 
-- Temporal fingertip tracking
-- Adaptive smoothing
+- Python
+- Computer vision
+- MediaPipe hand landmarks
+- Temporal smoothing
 - Velocity estimation
 - Confidence handling
 - Tracking-gap prediction
 - Temporal gesture voting
-- WebSocket communication
-- FastAPI service
-- Browser-side fallback behaviour
+- WebSockets
+- FastAPI
+- Browser interaction
 
-The project follows:
+The project is intentionally focused on the engineering problem of turning noisy, real-time sensor input into stable user-visible behaviour.
 
-**Build → test → observe → measure → improve.**
+## Modes
 
-## Run the frontend
+| Mode | Behaviour |
+|---|---|
+| Draw | Follow fingertip movement and create strokes |
+| Shape | Convert rough geometry into cleaner shapes |
+| Pointer | Use fingertip as a presentation pointer |
+| Laser | Create a temporary emphasis trail |
+
+## Engineering loop
+
+```text
+IMPLEMENT
+   ↓
+TEST
+   ↓
+OBSERVE
+   ↓
+MEASURE
+   ↓
+IMPROVE
+```
+
+## Run
 
 ```bash
 npm install
 npm run dev
 ```
 
-## Run the optional Python service
+Optional Python service:
 
 ```bash
 cd backend
 python -m venv .venv
-```
-
-Windows:
-
-```bash
-.venv\Scripts\activate
-```
-
-macOS / Linux:
-
-```bash
-source .venv/bin/activate
-```
-
-Then install dependencies and run:
-
-```bash
+# activate the environment
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 
 ## Portfolio role
 
-**SUPPORTING ENGINEERING — real-time systems**
+**REAL-TIME / COMPUTER VISION — Python, FastAPI and WebSockets**
 
-AirCanvas is not the main IBM application-support project. It provides additional evidence of debugging and reasoning about real-time application behaviour, while [ThriiLocal](https://github.com/Rrachet/ThriiLocal), [SupportHub](https://github.com/Rrachet/SupportHub) and [APIAtlas](https://github.com/Rrachet/apiatlas) carry the primary application-operations story.
+[Live demo](https://rrachet.github.io/AirCanvas/) · [Source](https://github.com/Rrachet/AirCanvas)
 
 ## License
 

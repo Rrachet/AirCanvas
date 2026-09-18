@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Camera, Circle, MousePointer2, PenLine, Play, Sparkles, Square, Zap } from 'lucide-react';
-import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision';
 import './styles.css';
 
 const MP_VERSION = '0.10.35';
@@ -25,7 +24,7 @@ function App(){
  const segment=useCallback((a,b)=>{const x=canvas.current?.getContext('2d');if(!x||mode==='pointer')return;const n=Math.max(1,Math.ceil(dist(a,b)/2.5));x.save();x.strokeStyle='#f4f1e8';x.lineWidth=mode==='shape'?5:6;x.lineCap='round';x.lineJoin='round';x.shadowColor='#f4f1e8';x.shadowBlur=mode==='draw'?4:7;x.beginPath();x.moveTo(a.x,a.y);for(let i=1;i<=n;i++){const t=i/n;x.lineTo(a.x+(b.x-a.x)*t,a.y+(b.y-a.y)*t)}x.stroke();x.restore()},[mode]);
  const laser=useCallback(p=>{const c=canvas.current,x=c?.getContext('2d');if(!x)return;trail.current.push({...p,t:performance.now()});trail.current=trail.current.slice(-30);x.clearRect(0,0,c.clientWidth,c.clientHeight);for(let i=1;i<trail.current.length;i++){const a=trail.current[i-1],b=trail.current[i],alpha=Math.max(0,1-(performance.now()-b.t)/600);x.save();x.globalAlpha=alpha;x.strokeStyle='#e97878';x.shadowColor='#e97878';x.shadowBlur=14;x.lineWidth=3+alpha*4;x.lineCap='round';x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke();x.restore()}},[]);
  const align=useCallback(()=>{if(mode!=='shape'||points.current.length<12)return;const s=detectShape(points.current),x=canvas.current?.getContext('2d');if(!s||!x)return;x.save();x.strokeStyle='#d8e6c9';x.lineWidth=5;x.lineCap='round';x.lineJoin='round';x.shadowColor='#d8e6c9';x.shadowBlur=8;x.beginPath();if(s.type==='circle')x.arc(s.cx,s.cy,s.r,0,Math.PI*2);else if(s.type==='line'){x.moveTo(s.from.x,s.from.y);x.lineTo(s.to.x,s.to.y)}else{s.vertices.forEach((p,i)=>i?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y));x.closePath()}x.stroke();x.restore();setAligned(`${s.type} aligned${s.sides?` · ${s.sides} sides`:''}`);points.current=[]},[mode]);
- const init=async delegate=>{const vision=await FilesetResolver.forVisionTasks(WASM_URL);return HandLandmarker.createFromOptions(vision,{baseOptions:{modelAssetPath:MODEL_URL,delegate},runningMode:'VIDEO',numHands:1,minHandDetectionConfidence:.22,minHandPresenceConfidence:.22,minTrackingConfidence:.22})};
+ const init=async delegate=>{const {HandLandmarker,FilesetResolver}=await import('@mediapipe/tasks-vision');const vision=await FilesetResolver.forVisionTasks(WASM_URL);return HandLandmarker.createFromOptions(vision,{baseOptions:{modelAssetPath:MODEL_URL,delegate},runningMode:'VIDEO',numHands:1,minHandDetectionConfidence:.22,minHandPresenceConfidence:.22,minTrackingConfidence:.22})};
  const openBackend=useCallback(()=>{if(!BACKEND_WS||typeof WebSocket==='undefined')return;try{const socket=new WebSocket(BACKEND_WS);socket.onmessage=e=>{try{backendGesture.current=String(JSON.parse(e.data).gesture||'').toLowerCase()}catch{}};socket.onerror=()=>socket.close();ws.current=socket}catch{ws.current=null}},[]);
  const closeBackend=useCallback(()=>{if(ws.current){try{ws.current.close()}catch{}ws.current=null}backendGesture.current=''},[]);
  const stop=useCallback(()=>{if(raf.current)cancelAnimationFrame(raf.current);raf.current=null;closeBackend();stream.current?.getTracks().forEach(t=>t.stop());stream.current=null;if(video.current)video.current.srcObject=null;tracker.current?.close();tracker.current=null;setCamera(false);setReady(false);setTip(null);setG('none');previous.current=null;smooth.current=null;gestureHistory.current=[];stableGesture.current='none'},[closeBackend]);
@@ -50,4 +49,10 @@ function App(){
   <footer className="footer"><div>AirCanvas / 001 <span>·</span> Built by Amarnath Mishra</div><a href="https://www.linkedin.com/in/amarnath-mishra" target="_blank" rel="noreferrer">LinkedIn</a></footer>
  </main>;
 }
-createRoot(document.getElementById('root')).render(<App/>);
+class ErrorBoundary extends React.Component{
+ constructor(props){super(props);this.state={hasError:false}}
+ static getDerivedStateFromError(){return{hasError:true}}
+ componentDidCatch(error,info){console.error('AirCanvas UI error',error,info)}
+ render(){if(this.state.hasError)return <main style={{minHeight:'100vh',display:'grid',placeItems:'center',background:'#080908',color:'#f4f3ee',fontFamily:'system-ui,sans-serif',padding:'24px',textAlign:'center'}}><div><h1 style={{fontSize:'42px',margin:'0 0 12px'}}>AirCanvas</h1><p style={{color:'#92988f',marginBottom:'24px'}}>The interface hit an unexpected browser error.</p><button onClick={()=>window.location.reload()} style={{border:0,borderRadius:'7px',padding:'12px 18px',fontWeight:800,cursor:'pointer'}}>Reload AirCanvas</button></div></main>;return this.props.children}
+}
+createRoot(document.getElementById('root')).render(<ErrorBoundary><App/></ErrorBoundary>);

@@ -41,7 +41,7 @@ jobs:
           const refs = [...html.matchAll(/(?:src|href)="([^"]+)"/g)].map(m => m[1]);
           const missing = refs
             .filter(p => p.startsWith('/'))
-            .map(p => p.replace(/^\//, ''))
+            .map(p => p.replace(/^\//, '').replace(/^AirCanvas\//, ''))
             .filter(p => !fs.existsSync('dist/' + p));
           if (missing.length) {
             console.error('Missing production assets:', missing);

@@ -2,6 +2,6 @@
 torch>=2.7,<3
 scikit-learn>=1.7,<2
 pandas>=2.3,<3
-matplotlib>=3.10,<4
+matplotlib>=3.11.2,<4
 # RTMPose/MMPose stack should be installed separately following its official
 # compatibility matrix; do not force it into the production API image.
